@@ -562,14 +562,14 @@ void Cserver::t_file::select_peers(const Ctracker_input& ti, Cannounce_output& o
 	o.incomplete(leechers);
 	t_candidates candidates;
 
-	for (t_peers::const_iterator i = cur_peers.begin(); i != cur_peers.end(); i++)
+	for (t_peers::const_iterator i = peers.begin(); i != peers.end(); i++)
 	{
 		if ((ti.m_left || i->second.left) && i->second.listening)
 			candidates.push_back(i); 
 	}
 	size_t c = ti.m_num_want < 0 ? MAX_PEERS : min(ti.m_num_want, MAX_PEERS);
 
-    crop_n_peers(candidates, c)
+    crop_n_peers(candidates, c);
     
     for (t_candidates::const_iterator i = candidates.begin(); i != candidates.end(); i++)
 	    o.peer((*i)->first.first, (*i)->second);

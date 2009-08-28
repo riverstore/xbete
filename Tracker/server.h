@@ -15,6 +15,8 @@
 #include "tracker_input.h"
 #include "udp_listen_socket.h"
 
+const int MAX_PEERS = 50;
+
 class Cserver
 {
 public:
@@ -295,8 +297,6 @@ private:
 	string m_scrape_log_buffer;
 	string m_table_prefix;
 	string m_users_updates_buffer;
-
-    const int MAX_PEERS = 50;
 };
 
 #endif // !defined(AFX_SERVER_H__B9726CD5_D101_4193_A555_69102FC058E9__INCLUDED_)
