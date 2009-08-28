@@ -79,9 +79,31 @@ public:
 
 	struct t_file
 	{
+        typedef vector<t_peers::const_iterator> t_candidates;
+
 		void clean_up(time_t t, Cserver&);
 		string debug() const;
-		void select_peers(const Ctracker_input&, Cannounce_output&) const;
+
+        /// @brief make up peer list for current request
+        /// @param ti - current client
+        /// @param o - generating output
+		void select_peers(const Ctracker_input & ti, Cannounce_output & o) const;
+
+        /// @brief get only internal peers (like 10.*)
+        /// @param ti - current client
+        /// @param cand - peers candidates
+        void get_internal_peers(const Ctracker_input & ti, t_candidates cand) const;
+
+        /// @brief get only external peers (not in 10.*)
+        /// @param ti - current client
+        /// @param cand - peers candidates
+        void get_external_peers(const Ctracker_input & ti, t_candidates cand) const;
+
+        /// @brief get N candidates (depend from ti)
+        /// @param cand - peers candidates
+        void crop_n_peers(t_candidates cand, int n) const;
+
+
 		Cbvalue scrape() const;
 
 		t_file()
@@ -273,6 +295,8 @@ private:
 	string m_scrape_log_buffer;
 	string m_table_prefix;
 	string m_users_updates_buffer;
+
+    const int MAX_PEERS = 50;
 };
 
 #endif // !defined(AFX_SERVER_H__B9726CD5_D101_4193_A555_69102FC058E9__INCLUDED_)

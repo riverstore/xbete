@@ -698,10 +698,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\XBT Tracker.rc"
-				>
-			</File>
-			<File
 				RelativePath="..\misc\xcc_error.cpp"
 				>
 			</File>
