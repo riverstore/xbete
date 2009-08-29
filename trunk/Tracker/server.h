@@ -89,7 +89,7 @@ public:
         /// @brief make up peer list for current request
         /// @param ti - current client
         /// @param o - generating output
-		void select_peers(const Ctracker_input & ti, Cannounce_output & o) const;
+        void select_peers(const Ctracker_input & ti, Cannounce_output & o) const;
 
         /// @brief get only internal peers (like 10.*)
         /// @param ti - current client
