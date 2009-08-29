@@ -103,7 +103,7 @@ public:
 
         /// @brief get N candidates (depend from ti)
         /// @param cand - peers candidates
-        void crop_n_peers(t_candidates cand, int n) const;
+        void crop_n_peers(t_candidates cand, size_t n) const;
 
 
 		Cbvalue scrape() const;
