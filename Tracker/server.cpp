@@ -571,7 +571,8 @@ void Cserver::t_file::select_peers(const Ctracker_input& ti, Cannounce_output& o
     crop_n_peers(candidates, c);
 
 	for (t_candidates::const_iterator i = candidates.begin(); i != candidates.end(); i++)
-			o.peer((*i)->first.first, (*i)->second);
+	    o.peer((*i)->first.first, (*i)->second);
+
 }
 
 Cbvalue Cserver::select_peers(const Ctracker_input& ti, const t_user* user)
@@ -1020,12 +1021,15 @@ string Cserver::t_file::debug() const
 
 void Cserver::t_file::crop_n_peers( t_candidates & cand, size_t n ) const
 {
+    if (cand.size() > n)
+    {
         while (n--)
         {
             int i = rand() % cand.size();
             cand[i] = cand.back();
             cand.pop_back();
         }
+    }
 }
 string Cserver::debug(const Ctracker_input& ti) const
 {
