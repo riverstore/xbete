@@ -1032,9 +1032,18 @@ void Cserver::t_file::crop_n_peers( t_candidates & cand, size_t n ) const
     }
 }
 
-void Cserver::t_file::get_internal_peers( const Ctracker_input & ti, t_candidates cand ) const
+void Cserver::t_file::remove_external_peers( const Ctracker_input & ti, t_candidates cand ) const
 {
+    t_candidates::iterator new_end;
+    new_end = remove_if(cand.begin(),cand.end(),not1(is_internal_peer()));
+    cand.erase(new_end,cand.end());
+}
 
+void Cserver::t_file::remove_internal_peers( const Ctracker_input & ti, t_candidates cand ) const
+{
+    t_candidates::iterator new_end;
+    new_end = remove_if(cand.begin(),cand.end(),is_internal_peer());
+    cand.erase(new_end,cand.end());
 }
 string Cserver::debug(const Ctracker_input& ti) const
 {
@@ -1229,4 +1238,11 @@ int Cserver::test_sql()
 	{
 	}
 	return 1;
+}
+
+bool Cserver::t_file::is_internal_peer::operator()( t_peers::const_iterator peer ) const
+{
+    int ip =  ((*peer).first.first);
+    ip &= 0xFF; //take lower byte, it is first byte on "10.x.y.z"
+    return ip == 10;
 }

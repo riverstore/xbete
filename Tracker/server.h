@@ -14,6 +14,7 @@
 #include "tcp_listen_socket.h"
 #include "tracker_input.h"
 #include "udp_listen_socket.h"
+#include <functional>
 
 const int MAX_PEERS = 50;
 
@@ -94,16 +95,22 @@ public:
         /// @brief get only internal peers (like 10.*)
         /// @param ti - current client
         /// @param cand - peers candidates
-        void get_internal_peers(const Ctracker_input & ti, t_candidates cand) const;
+        void remove_external_peers(const Ctracker_input & ti, t_candidates cand) const;
 
         /// @brief get only external peers (not in 10.*)
         /// @param ti - current client
         /// @param cand - peers candidates
-        void get_external_peers(const Ctracker_input & ti, t_candidates cand) const;
+        void remove_internal_peers(const Ctracker_input & ti, t_candidates cand) const;
 
         /// @brief get N candidates (depend from ti)
         /// @param cand - peers candidates
         void crop_n_peers(t_candidates & cand, size_t n) const;
+
+        struct is_internal_peer : unary_function<t_peers::const_iterator, bool>
+        {
+            bool operator ()(t_peers::const_iterator peer)const;
+        };
+
 
 
 		Cbvalue scrape() const;
