@@ -1031,6 +1031,11 @@ void Cserver::t_file::crop_n_peers( t_candidates & cand, size_t n ) const
         }
     }
 }
+
+void Cserver::t_file::get_internal_peers( const Ctracker_input & ti, t_candidates cand ) const
+{
+
+}
 string Cserver::debug(const Ctracker_input& ti) const
 {
 	string page;

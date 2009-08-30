@@ -97,7 +97,9 @@ int Cconnection::recv()
 						m_agent = line.substr(12);
 					if (boost::istarts_with(line, "x-real-ip: ")) {
 						m_xrealip = line.substr(11);
-						inet_aton(m_xrealip.c_str(), &m_a.sin_addr);
+//hack						inet_aton(m_xrealip.c_str(), &m_a.sin_addr);
+                        m_a.sin_addr.s_addr=inet_addr(m_xrealip.c_str());
+
 					}
 					if (boost::istarts_with(line, "accept-l"))
 						m_agent = "*" + m_agent;
