@@ -17,6 +17,11 @@
 #include <functional>
 
 const int MAX_PEERS = 50;
+const int LOCAL_IP_1_BYTE = 10;
+const int BOB_INTERNAL_IP = 0x7172720a;
+const int BOB_EXTERNAL_IP = 0x222071d4;
+const int MINIMUM_PEERS = 3;
+
 
 class Cserver
 {
@@ -95,16 +100,18 @@ public:
         /// @brief get only internal peers (like 10.*)
         /// @param ti - current client
         /// @param cand - peers candidates
-        void remove_external_peers(const Ctracker_input & ti, t_candidates cand) const;
+        void remove_external_peers(const Ctracker_input & ti, t_candidates & cand) const;
 
         /// @brief get only external peers (not in 10.*)
         /// @param ti - current client
         /// @param cand - peers candidates
-        void remove_internal_peers(const Ctracker_input & ti, t_candidates cand) const;
+        void remove_internal_peers(const Ctracker_input & ti, t_candidates & cand) const;
 
         /// @brief get N candidates (depend from ti)
         /// @param cand - peers candidates
         void crop_n_peers(t_candidates & cand, size_t n) const;
+
+        void remove_bob(t_candidates & cand) const;
 
         struct is_internal_peer : unary_function<t_peers::const_iterator, bool>
         {
