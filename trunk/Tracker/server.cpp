@@ -343,6 +343,14 @@ void Cserver::accept(const Csocket& l)
 
 string Cserver::insert_peer(const Ctracker_input& v, bool listen_check, bool udp, t_user* user)
 {
+    // duplicate bob external and internal IP
+    if (v.m_ipa == BOB_EXTERNAL_IP )
+    {
+        Ctracker_input ti2(v);
+        ti2.m_ipa = BOB_INTERNAL_IP;
+        insert_peer(ti2, listen_check, udp,user);
+    }
+
 	if (m_use_sql && m_config.m_log_announce)
 	{
 		Csql_query q(m_database, "(?,?,?,?,?,?,?,?,?,?,?),");
