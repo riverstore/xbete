@@ -105,7 +105,7 @@ public:
         /// @brief get only external peers (not in 10.*)
         /// @param ti - current client
         /// @param cand - peers candidates
-        void remove_internal_peers(const Ctracker_input & ti, t_candidates & cand) const;
+        void delete_internal_peers(const Ctracker_input & ti, t_candidates & cand) const;
 
         /// @brief get N candidates (depend from ti)
         /// @param cand - peers candidates
