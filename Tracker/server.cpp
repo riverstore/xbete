@@ -566,9 +566,27 @@ void Cserver::t_file::select_peers(const Ctracker_input& ti, Cannounce_output& o
 		if ((ti.m_left || i->second.left) && i->second.listening)
 			candidates.push_back(i);
 	}
+
+    if ( (ti.m_ipa & 0xFF) == LOCAL_IP_1_BYTE) //internal peer have ip like "10.*.*.*"
+    {
+        remove_external_peers(ti, candidates);
+    } else
+    {
+        remove_internal_peers(ti, candidates);
+    }
+
+
 	size_t c = ti.m_num_want < 0 ? MAX_PEERS : min(ti.m_num_want, MAX_PEERS);
 
-    crop_n_peers(candidates, c);
+    if (candidates.size() > MINIMUM_PEERS)
+    {
+        remove_bob();
+    }
+
+    if (candidates.size() > c)
+    {
+        crop_n_peers(candidates, c);
+    }
 
 	for (t_candidates::const_iterator i = candidates.begin(); i != candidates.end(); i++)
 	    o.peer((*i)->first.first, (*i)->second);
@@ -1021,29 +1039,39 @@ string Cserver::t_file::debug() const
 
 void Cserver::t_file::crop_n_peers( t_candidates & cand, size_t n ) const
 {
-    if (cand.size() > n)
-    {
         while (n--)
         {
             int i = rand() % cand.size();
             cand[i] = cand.back();
             cand.pop_back();
         }
-    }
+
 }
 
-void Cserver::t_file::remove_external_peers( const Ctracker_input & ti, t_candidates cand ) const
+void Cserver::t_file::remove_external_peers( const Ctracker_input & ti, t_candidates & cand ) const 
 {
     t_candidates::iterator new_end;
     new_end = remove_if(cand.begin(),cand.end(),not1(is_internal_peer()));
     cand.erase(new_end,cand.end());
 }
 
-void Cserver::t_file::remove_internal_peers( const Ctracker_input & ti, t_candidates cand ) const
+void Cserver::t_file::remove_internal_peers( const Ctracker_input & ti, t_candidates & cand )  const
 {
     t_candidates::iterator new_end;
     new_end = remove_if(cand.begin(),cand.end(),is_internal_peer());
     cand.erase(new_end,cand.end());
+}
+
+void Cserver::t_file::remove_bob( t_candidates & cand ) const
+{
+    for (t_candidates::iterator i = cand.begin(); i != cand.end(); ++i)
+    {
+        if (((*i)->first.first == BOB_INTERNAL_IP) || (*i)->first.first == BOB_EXTERNAL_IP )
+        {
+            cand.erase(i);
+            break;
+        }
+    }
 }
 string Cserver::debug(const Ctracker_input& ti) const
 {
@@ -1243,6 +1271,6 @@ int Cserver::test_sql()
 bool Cserver::t_file::is_internal_peer::operator()( t_peers::const_iterator peer ) const
 {
     int ip =  ((*peer).first.first);
-    ip &= 0xFF; //take lower byte, it is first byte on "10.x.y.z"
-    return ip == 10;
+    ip &= 0xFF; //take lower byte 
+    return ip == LOCAL_IP_1_BYTE; //local peer like "10.x.y.z"
 }
