@@ -97,20 +97,23 @@ public:
         /// @param o - generating output
         void select_peers(const Ctracker_input & ti, Cannounce_output & o) const;
 
-        /// @brief get only internal peers (like 10.*)
+        /// @brief move external peers to the and of peerlist
         /// @param ti - current client
         /// @param cand - peers candidates
-        void remove_external_peers(const Ctracker_input & ti, t_candidates & cand) const;
+        /// @return - numbers of internal peers
+        int move_external_peers(const Ctracker_input & ti, t_candidates & cand) const;
 
         /// @brief get only external peers (not in 10.*)
         /// @param ti - current client
         /// @param cand - peers candidates
-        void delete_internal_peers(const Ctracker_input & ti, t_candidates & cand) const;
+        void remove_internal_peers(const Ctracker_input & ti, t_candidates & cand) const;
 
         /// @brief get N candidates (depend from ti)
         /// @param cand - peers candidates
         void crop_n_peers(t_candidates & cand, size_t n) const;
 
+        /// @brief remove BOB and other "magic" peers
+        /// @param cand - peers candidates
         void remove_bob(t_candidates & cand) const;
 
         struct is_internal_peer : unary_function<t_peers::const_iterator, bool>
