@@ -577,19 +577,21 @@ void Cserver::t_file::select_peers(const Ctracker_input& ti, Cannounce_output& o
 
     if ( (ti.m_ipa & 0xFF) == LOCAL_IP_1_BYTE) //internal peer have ip like "10.*.*.*"
     {
-        remove_external_peers(ti, candidates);
+        if (move_external_peers(ti, candidates) > MINIMUM_PEERS)
+        {
+            remove_bob(candidates);
+        }
     } else
     {
-        delete_internal_peers(ti, candidates);
+        remove_internal_peers(ti, candidates);
+        if (candidates.size() > MINIMUM_PEERS)
+        {
+            remove_bob(candidates);
+        }
     }
 
 
 	size_t c = ti.m_num_want < 0 ? MAX_PEERS : min(ti.m_num_want, MAX_PEERS);
-
-    if (candidates.size() > MINIMUM_PEERS)
-    {
-        remove_bob(candidates);
-    }
 
     if (candidates.size() > c)
     {
@@ -1056,12 +1058,13 @@ void Cserver::t_file::crop_n_peers( t_candidates & cand, size_t n ) const
 
 }
 
-void Cserver::t_file::remove_external_peers( const Ctracker_input & ti, t_candidates & cand ) const 
+int Cserver::t_file::move_external_peers( const Ctracker_input & ti, t_candidates & cand ) const
 {
-    remove_if(cand.begin(),cand.end(),not1(is_internal_peer()));
+    t_candidates::iterator new_end = partition(cand.begin(),cand.end(),is_internal_peer());
+    return cand.end()-new_end;
 }
 
-void Cserver::t_file::delete_internal_peers( const Ctracker_input & ti, t_candidates & cand ) const
+void Cserver::t_file::remove_internal_peers( const Ctracker_input & ti, t_candidates & cand ) const
 {
     t_candidates::iterator new_end;
     new_end = remove_if(cand.begin(),cand.end(),is_internal_peer());
