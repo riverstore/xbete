@@ -575,27 +575,31 @@ void Cserver::t_file::select_peers(const Ctracker_input& ti, Cannounce_output& o
 			candidates.push_back(i);
 	}
 
-    if ( (ti.m_ipa & 0xFF) == LOCAL_IP_1_BYTE) //internal peer have ip like "10.*.*.*"
+    // bob get all peers
+    if (! i_am_bob(ti.m_ipa))
     {
-        if (move_external_peers(ti, candidates) > MINIMUM_PEERS)
+        if ( (ti.m_ipa & 0xFF) == LOCAL_IP_1_BYTE) //internal peer have ip like "10.*.*.*"
         {
-            remove_bob(candidates);
-        }
-    } else
-    {
-        remove_internal_peers(ti, candidates);
-        if (candidates.size() > MINIMUM_PEERS)
+            if (move_external_peers(ti, candidates) > MINIMUM_PEERS)
+            {
+                remove_bob(candidates);
+            }
+        } else
         {
-            remove_bob(candidates);
+            remove_internal_peers(ti, candidates);
+            if (candidates.size() > MINIMUM_PEERS)
+            {
+                remove_bob(candidates);
+            }
         }
-    }
 
+        /// crop peerlist
+        size_t c = ti.m_num_want < 0 ? MAX_PEERS : min(ti.m_num_want, MAX_PEERS);
+        if (candidates.size() > c)
+        {
+            crop_n_peers(candidates, c);
+        }
 
-	size_t c = ti.m_num_want < 0 ? MAX_PEERS : min(ti.m_num_want, MAX_PEERS);
-
-    if (candidates.size() > c)
-    {
-        crop_n_peers(candidates, c);
     }
 
 	for (t_candidates::const_iterator i = candidates.begin(); i != candidates.end(); i++)
@@ -1081,6 +1085,11 @@ void Cserver::t_file::remove_bob( t_candidates & cand ) const
             break;
         }
     }
+}
+
+bool Cserver::t_file::i_am_bob( const int ip ) const
+{
+    return (ip == BOB_EXTERNAL_IP || ip == BOB_EXTERNAL_IP);
 }
 string Cserver::debug(const Ctracker_input& ti) const
 {

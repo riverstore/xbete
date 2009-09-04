@@ -16,11 +16,11 @@
 #include "udp_listen_socket.h"
 #include <functional>
 
-const int MAX_PEERS = 50;
-const int LOCAL_IP_1_BYTE = 10;
-const int BOB_INTERNAL_IP = 0x7172720a;
+const int MAX_PEERS = 50;  //maximum returned peers
+const int LOCAL_IP_1_BYTE = 10; // first byte for intranet
+const int BOB_INTERNAL_IP = 0x7072720a;
 const int BOB_EXTERNAL_IP = 0x222071d4;
-const int MINIMUM_PEERS = 3;
+const int MINIMUM_PEERS = 3; // minimum peers when bob and other magic peers are not give
 
 
 class Cserver
@@ -115,6 +115,8 @@ public:
         /// @brief remove BOB and other "magic" peers
         /// @param cand - peers candidates
         void remove_bob(t_candidates & cand) const;
+
+        bool i_am_bob(const int ip) const;
 
         struct is_internal_peer : unary_function<t_peers::const_iterator, bool>
         {
