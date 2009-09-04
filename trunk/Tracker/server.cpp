@@ -586,8 +586,7 @@ void Cserver::t_file::select_peers(const Ctracker_input& ti, Cannounce_output& o
             }
         } else
         {
-            remove_internal_peers(ti, candidates);
-            if (candidates.size() > MINIMUM_PEERS)
+            if (move_internal_peers(ti, candidates) > MINIMUM_PEERS)
             {
                 remove_bob(candidates);
             }
@@ -1068,11 +1067,10 @@ int Cserver::t_file::move_external_peers( const Ctracker_input & ti, t_candidate
     return cand.end()-new_end;
 }
 
-void Cserver::t_file::remove_internal_peers( const Ctracker_input & ti, t_candidates & cand ) const
+int Cserver::t_file::move_internal_peers( const Ctracker_input & ti, t_candidates & cand ) const
 {
-    t_candidates::iterator new_end;
-    new_end = remove_if(cand.begin(),cand.end(),is_internal_peer());
-    cand.erase(new_end,cand.end());
+    t_candidates::iterator new_end = partition(cand.begin(),cand.end(),not1(is_internal_peer()));
+    return cand.end()-new_end;
 }
 
 void Cserver::t_file::remove_bob( t_candidates & cand ) const
@@ -1091,6 +1089,7 @@ bool Cserver::t_file::i_am_bob( const int ip ) const
 {
     return (ip == BOB_EXTERNAL_IP || ip == BOB_EXTERNAL_IP);
 }
+
 string Cserver::debug(const Ctracker_input& ti) const
 {
 	string page;

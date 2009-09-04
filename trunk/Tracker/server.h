@@ -103,10 +103,11 @@ public:
         /// @return - numbers of internal peers
         int move_external_peers(const Ctracker_input & ti, t_candidates & cand) const;
 
-        /// @brief get only external peers (not in 10.*)
+        /// @brief move internal peers to the and of peerlist
         /// @param ti - current client
         /// @param cand - peers candidates
-        void remove_internal_peers(const Ctracker_input & ti, t_candidates & cand) const;
+        /// @return - numbers of internal peers
+        int move_internal_peers(const Ctracker_input & ti, t_candidates & cand) const;
 
         /// @brief get N candidates (depend from ti)
         /// @param cand - peers candidates
